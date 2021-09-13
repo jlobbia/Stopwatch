@@ -12,6 +12,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var stopwatch : Chronometer
     lateinit var startstop : Button
     lateinit var reset : Button
+    var lasttimestopped = 0L
 
     companion object {
         //static constants
@@ -26,20 +27,24 @@ class MainActivity : AppCompatActivity() {
         startstop = findViewById(R.id.startstop)
         reset = findViewById(R.id.reset)
         startstop.text = "START"
+        reset.text = "RESET"
         startstop.setOnClickListener {
             if(startstop.text == "START") {
+                stopwatch.setBase(SystemClock.elapsedRealtime()+lasttimestopped)
                 stopwatch.start()
-                startstop.text = "STOP"
+                startstop.text = "PAUSE"
             }
             else {
-                stopwatch.stop()
+                lasttimestopped = (stopwatch.getBase()-SystemClock.elapsedRealtime())
                 startstop.text = "START"
+                stopwatch.stop()
             }
         }
         reset.setOnClickListener {
             stopwatch.stop()
             startstop.text = "START"
-            stopwatch.setBase(SystemClock.elapsedRealtime())
+            stopwatch.setBase(SystemClock.elapsedRealtime()-lasttimestopped)
+            lasttimestopped = 0L
         }
     }
 
